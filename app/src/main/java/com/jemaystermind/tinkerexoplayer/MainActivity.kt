@@ -4,7 +4,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.view.View
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.google.android.exoplayer2.DefaultControlDispatcher
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -34,17 +37,56 @@ class MainActivity : AppCompatActivity() {
         val dataSourceFactory = OkHttpDataSourceFactory(httpClient, agent, bandwidthMeter)
 
         val uri = Uri.parse("https://cdn.arnellebalane.com/videos/original-video.mp4")
-        val source = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri)
+        val cfSampleUri =
+            Uri.parse("https://d3heg6bx5jbtwp.cloudfront.net/video/enc/Tc7RwJjtXrsoCCuZyutbwd-360.webm")
+        val source = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(cfSampleUri)
+
+//        val clippingMediaSource = ClippingMediaSource(source, 2000, C.TIME_END_OF_SOURCE)
+
+
+//        val bMapper = Function<A, B> { B(it.int) }
+//        val (b, c) = A(1, "").
+//        val mappedB = bMapper.apply(A(1, "ad"))
+//        Function<> {  }
+//
+//        listOf<String>().map {  }
 
         val handler = Handler()
         val videoTrackSelectFactory = AdaptiveTrackSelection.Factory(bandwidthMeter)
         val trackSelector = DefaultTrackSelector(videoTrackSelectFactory)
 
+//        val a = A(1, "")
+//        with(a) { bMapper.apply(this) }
+//
+//
+//        val lists = listOf<Int>()
+//
+//        for (i in lists.indices) {
+//
+//        }
+
         // Prepare player!
         exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
+
         player.player = exoPlayer
         exoPlayer.prepare(source)
         exoPlayer.playWhenReady = true
+
+//        exo_overlay.visibility = View.GONE
+
+        player.setControlDispatcher(object : DefaultControlDispatcher() {
+            override fun dispatchSetPlayWhenReady(p: Player?, playWhenReady: Boolean): Boolean {
+                Log.e("Main", "play=$playWhenReady")
+
+//                player.overlay
+
+                return super.dispatchSetPlayWhenReady(p, playWhenReady)
+            }
+        })
+
+//        report.setOnClickListener {
+//            Log.e("Report", "Report clicked!")
+//        }
     }
 
     override fun onDestroy() {
